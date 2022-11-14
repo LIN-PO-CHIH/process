@@ -10,7 +10,7 @@ from fuzzywuzzy import fuzz, process
 # 輸入自己Bot的TOKEN碼
 
 
-Token = "OTcxMzg3NjQ0NTQ4MzQ5OTcy.GGafCT.O3wE6hzZ4H7YiV2tZ_sPMRRnC020c96Lmolmak"
+Token = "0000"
 bot = ComponentsBot("/")
 user_coroutine = {}
 user = {}
