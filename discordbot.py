@@ -10,7 +10,7 @@ from fuzzywuzzy import fuzz, process
 # 輸入自己Bot的TOKEN碼
 
 
-Token = "0000"
+Token = "OTcxMzg3NjQ0NTQ4MzQ5OTcy.GGafCT.O3wE6hzZ4H7YiV2tZ_sPMRRnC020c96Lmolmak"
 bot = ComponentsBot("/")
 user_coroutine = {}
 user = {}
@@ -202,13 +202,14 @@ async def TD(ctx, ref_res, channel_id, currency):
                                                                             gp.get_closeprice(count = 676), 
                                                                             gp.get_closeprice(count = 1),
                                                                             gp.get_lowprice(count = 10))
+            
             elif ref_res == 6:
-                direction, currentprice, stopwin, stoploss = strategy.LIN(gp.get_closeprice(count = 144),
-                                                                            gp.get_closeprice(count = 169),
-                                                                            gp.get_closeprice(count = 576),  
-                                                                            gp.get_closeprice(count = 676), 
+                direction, currentprice, stopwin, stoploss = strategy.LIN(gp.get_closeprice(count = 7),
+                                                                            gp.get_closeprice(count = 30),
+                                                                            gp.get_closeprice(count = 92),  
+                                                                            gp.get_closeprice(count = 200), 
                                                                             gp.get_closeprice(count = 1),
-                                                                            gp.get_lowprice(count = 10))
+                                                                            gp.get_closeprice(count = 2))
 
             """
             elif ref_res == 6:

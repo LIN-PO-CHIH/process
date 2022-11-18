@@ -103,62 +103,29 @@ class strategy:
         else:
             return "None", "None", "None", "None"
 
-    def LIN(ma7, ma30, ma92, ma200, close, open):
-        close = close.iloc[0]
-        open = open.iloc[0]
-        Open2019 = open['2019']
-        ma7 = talib.SMA(close, timeperiod=7)
-        ma30 = talib.SMA(close, timeperiod=30)
-        ma92 = talib.SMA(close, timeperiod=92)
-        ma200 = talib.SMA(close, timeperiod=200)
-        MA_dif = ma7 - ma30
-        MA_dif = MA_dif['2019']
+    def LIN(ma7d, ma30d, ma92d, ma200d, open, close):
+        open, close = np.array(open.iloc[0]), np.array(close.iloc[0])
+        tp = [7, 30, 92, 200]
+        amount = [ma7d, ma30d, ma92d, ma200d]
+        weighted, MA_period= {}
+        wp, wv, MA_dif = 0
+        for i in range(len(amount)-1):
+            amount[i] = talib.SMA(amount[i], tp[i])
+        for i in range(len(amount)-1):
+            weighted[i], MA_period[i] = amount[i]/amount[i+1], amount[i]-amount[i+1]
+            wp = wp + weighted[i] * MA_period[i]
+            wv = wv + weighted[i]
+        MA_dif = wp/wv - MA_period[0]
+        STOPLOSS = ma200d
+        STOPWIN = 2 * ma7d - ma200d
+        if(bool(MA_dif >= 0)):
+            return "多", open, STOPWIN,STOPLOSS
+        elif(bool(MA_dif < 0)):
+            return "空", open, STOPWIN,STOPLOSS
+        else:
+            return "None", "None", "None", "None"
 
-        stock = 0
-        sig = [] 
-        for i in range(len(MA_dif)):
-            if MA_dif[i-1] < 0 and MA_dif[i] > 0 and stock == 0:
-                stock += 1
-                sig.append(1)
-            elif MA_dif[i-1] > 0 and MA_dif[i] < 0 and stock == 1:
-                stock -= 1
-                sig.append(-1)
-            else:
-                sig.append(0)
-        import pandas as pd
-        ma_sig = pd.Series(index = MA_dif.index, data = sig)
-        ma_sig_2019 = ma_sig['2019']
-
-        rets = []
-        transaction = []
-        stock = 0
-        stock_his = []
-        buy_price = 0
-        sell_price = 0
-        for i in range(len(ma_sig_2019)-1):
-            stock_his.append(stock)
-            if ma_sig_2019[i] == 1:
-                buy_price = Open2019[ma_sig_2019.index[i+1]]
-                stock += 1
-                transaction.append([ma_sig_2019.index[i+1],'buy'])
-            elif ma_sig_2019[i] == -1:
-                sell_price = Open2019[ma_sig_2019.index[i+1]]
-                stock -= 1
-                rets.append((sell_price-buy_price)/buy_price)
-                buy_price = 0
-                sell_price = 0
-                transaction.append([ma_sig_2019.index[i+1],'sell'])
-        if stock == 1 and buy_price != 0 and sell_price == 0:
-            sell_price = Open2019[-1]
-            rets.append((sell_price-buy_price)/buy_price)
-            stock -= 1
-            transaction.append([Open2019.index[-1],'sell'])
-        total_ret = 1
-        for ret in rets:
-            total_ret *= 1 + ret
-        # print(str(round((total_ret - 1)*100,2)) + '%')
-        print('總報酬率：' + str(round(100*(total_ret-1),2)) + '%')
-
+        
 
 
 if __name__ == "__main__":
